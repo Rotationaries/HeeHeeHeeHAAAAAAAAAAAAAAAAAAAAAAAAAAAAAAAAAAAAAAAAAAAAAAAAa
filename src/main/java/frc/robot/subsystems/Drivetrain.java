@@ -264,6 +264,12 @@ public class Drivetrain extends SubsystemBase {
   public double getHeading() {
     return Math.IEEEremainder(ahrs.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
+
+  public double getRoll() {
+    return ahrs.getRoll();
+  }
+
+  // public double 
   
   public void controllerMovement(XboxController controller){
     // rate = (0.5 * -controller.getRawAxis(3)) + 0.5;

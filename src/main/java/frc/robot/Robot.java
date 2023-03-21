@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   private Drivetrain m_drive = new Drivetrain();
   private Cascade m_cascade = new Cascade();
 
-  private XboxController controller = new XboxController(1);
+  private XboxController controller = new XboxController(0);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -80,17 +80,18 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
+    // // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+       m_autonomousCommand.schedule();
     }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    CommandScheduler.getInstance().run();
     // double x = tx.getDouble(0.0);
     // double y = ty.getDouble(0.0);
     // double area = ta.getDouble(0.0);
@@ -98,6 +99,7 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putNumber("ForwardBackward", );
     // SmartDashboard.putNumber("Turning", y);
     // SmartDashboard.putNumber("TurningSens", area);
+    m_drive.arcadeDrive(0, -0.5);
   }
 
   @Override
@@ -115,7 +117,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // m_drive.arcadeDrive(0.5, 0.5);
-    m_drive.arcadeDrive(-controller.getLeftY(), -controller.getRightX());
+    m_drive.arcadeDrive(-controller.getLeftY(), 0.9*-controller.getRightX());
     m_cascade.cascadeDrive();
 
   }
@@ -134,7 +136,7 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationInit() {
     REVPhysicsSim.getInstance().addSparkMax(Drivetrain.leftMotor1, DCMotor.getNEO(1));
-    REVPhysicsSim.getInstance().addSparkMax(Drivetrain.leftMotor2, DCMotor.getNEO(1));
+    // REVPhysicsSim.getInstance().addSjparkMax(Drivetrain.leftMotor2, DCMotor.getNEO(1));
     REVPhysicsSim.getInstance().addSparkMax(Drivetrain.rightMotor1, DCMotor.getNEO(1));
     REVPhysicsSim.getInstance().addSparkMax(Drivetrain.rightMotor2, DCMotor.getNEO(1));
   }
