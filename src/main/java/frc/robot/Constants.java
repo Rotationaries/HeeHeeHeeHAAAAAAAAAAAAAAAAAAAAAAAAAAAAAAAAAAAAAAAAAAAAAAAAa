@@ -117,7 +117,7 @@ public final class Constants {
     public static final double kRamseteZeta = 0.7;
 
     public static final RamseteController controller = new RamseteController(kRamseteB, kRamseteZeta);
-    public static final SimpleMotorFeedforward feedForward = 
+    public static final SimpleMotorFeedforward feedforward = 
     new SimpleMotorFeedforward(0.22, 1.98, 0.2);
   }
 
@@ -157,7 +157,23 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static double CONVEYOR_SPEED = .5;
-    public static double INTAKE_SPEED = -1.65;
+    public static double INTAKE_SPEED = -0.5
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ;
     public static double INDEXER_SPEED = .7;  
   }
 

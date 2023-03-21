@@ -5,17 +5,19 @@
 package frc.robot.subsystems;
 import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
 
-  private CANSparkMax intakeMotor;
+  private CANSparkMax intakeMotor = new CANSparkMax(9, MotorType.kBrushless);
   private boolean isIntakeUp;
   public Joystick joystick = new Joystick(1);
   /** Creates a new Intake. */
-  public Intake()  {  
+  public Intake()  {   
     System.out.println("Intake Started");
   }
 
@@ -37,16 +39,13 @@ public class Intake extends SubsystemBase {
       intakeMotor.set(0);
     }
   
+    if(joystick.getRawButton(1)){ //Eject
+      intakeMotor.set(IntakeConstants.INTAKE_SPEED);
+    }
 
-  if(joystick.getRawButton(2)){ //Eject
-    System.out.println("2");
-    intakeMotor.set(IntakeConstants.INTAKE_SPEED);
-  }
-
-  if (joystick.getRawButton(1)){ //Pullin
-    System.out.println("1");
-    intakeMotor.set(-IntakeConstants.INTAKE_SPEED);
-  }
+    if (joystick.getRawButton(2)){ //Pullin
+      intakeMotor.set(-IntakeConstants.INTAKE_SPEED);
+    }
 
 }
 }

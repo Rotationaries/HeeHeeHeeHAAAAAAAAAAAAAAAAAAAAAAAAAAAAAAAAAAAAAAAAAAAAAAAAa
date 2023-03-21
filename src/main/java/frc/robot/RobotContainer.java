@@ -4,16 +4,13 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autonomous.Autos;
+import frc.robot.commands.Autonomous.CreatingPaths;
 import frc.robot.commands.Drive.Drive;
+import frc.robot.commands.Drive.DriveDistance;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -25,6 +22,7 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain m_robotDrive = new Drivetrain();
+  private final CreatingPaths m_pathCreator = new CreatingPaths(m_robotDrive, null);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -70,7 +68,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_robotDrive);
+    //return new CreatingPaths(m_robotDrive, "DirectDock-M");
+    return m_pathCreator.dockPath();
+    //return new DriveDistance(0.5, m_robotDrive);
     //PathPlannerTrajectory traj = PathPlanner.loadPath("1CO1CU-B",new PathConstraints(2, 1.5));
   }
 }

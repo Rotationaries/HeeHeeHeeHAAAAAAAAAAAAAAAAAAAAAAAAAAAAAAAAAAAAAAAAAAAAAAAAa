@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DriveDistance extends CommandBase {
   private final Drivetrain m_drive;
-  private final double m_distance;
+  // private final double m_distance;
   private final double m_speed;
 
   /**
@@ -21,8 +21,8 @@ public class DriveDistance extends CommandBase {
    * @param inches The number of inches the robot will drive
    * @param drive The drivetrain subsystem on which this command will run
    */
-  public DriveDistance(double speed, double inches, Drivetrain drive) {
-    m_distance = inches;
+  public DriveDistance(double speed, Drivetrain drive) {
+    // m_distance = inches;
     m_speed = speed;
     m_drive = drive;
     addRequirements(drive);
@@ -31,7 +31,7 @@ public class DriveDistance extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_drive.arcadeDrive(0, 0);
+    // m_drive.arcadeDrive(0, 0);
     // m_drive.resetEncoders();
   }
 
@@ -44,7 +44,7 @@ public class DriveDistance extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drive.arcadeDrive(0, 0);
+    // m_drive.arcadeDrive(0, 0);
   }
 
   // Returns true when the command should end.

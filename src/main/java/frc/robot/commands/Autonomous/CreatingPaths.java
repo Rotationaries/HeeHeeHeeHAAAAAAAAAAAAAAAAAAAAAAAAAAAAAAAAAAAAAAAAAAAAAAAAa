@@ -11,9 +11,17 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 
 /** An example command that uses an example subsystem. */
 public class CreatingPaths extends CommandBase {
@@ -21,6 +29,7 @@ public class CreatingPaths extends CommandBase {
   private Trajectory traj;
   //private int pcx, pcy;
   private String fileName;
+  private List<PathPlannerTrajectory> alist = new ArrayList<>();
 
   //private double ks, kv, ka;
 
@@ -44,19 +53,36 @@ public class CreatingPaths extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    followPath();
+  
   }
 
-  public Command followPath() {
+  public void followPath() {
     //feedforward.calculate(pc.getVelo(), pc.getVelo()+pc.getPID().getVelocityError(), pc.getPID().getPeriod());
 
     //Supplier<Pose2d> supply = () -> track.getPos();
+    //CommandScheduler.getInstance().schedule(new PrintingCommand());
+    // CommandScheduler.getInstance().schedule(new RamseteCommand(traj, m_drive::getPose, AutoConstants.controller, 
+    // AutoConstants.feedforward, DriveConstants.kDriveKinematics, m_drive::getWheelSpeeds, 
+    // new PIDController(DriveConstants.kPDriveVel, 0, 0), 
+    // new PIDController(DriveConstants.kPDriveVel, 0, 0), m_drive::tankDriveVolts, m_drive));
+  }
 
-    return new RamseteCommand(traj, m_drive::getPose, AutoConstants.controller, 
-    AutoConstants.feedForward, DriveConstants.kDriveKinematics, m_drive::getWheelSpeeds, 
+public CommandBase dockPath(){
+  // PathPlannerTrajectory traj = PathPlanner.loadPath("DirectDock-M", AutoConstants.kMaxSpeedMetersPerSecond, 
+  // AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+  // //return Commands.sequence(driveCommand(traj), new Balance());
+  return Commands.sequence(new PrintingCommand());
+  
+}
+
+public Command driveCommand(PathPlannerTrajectory trajectory){
+  RamseteCommand command = new RamseteCommand(traj, m_drive::getPose, AutoConstants.controller, 
+    AutoConstants.feedforward, DriveConstants.kDriveKinematics, m_drive::getWheelSpeeds, 
     new PIDController(DriveConstants.kPDriveVel, 0, 0), 
     new PIDController(DriveConstants.kPDriveVel, 0, 0), m_drive::tankDriveVolts, m_drive);
-  }
+    return Commands.sequence(command);
+}
+
 
   public Trajectory getTraj() {
     return traj;
@@ -72,4 +98,5 @@ public class CreatingPaths extends CommandBase {
     return false;
   }
 }
+
 

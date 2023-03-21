@@ -146,7 +146,7 @@ public class Arm extends SubsystemBase {
        * setReference method on an existing pid object and setting
        * the control type to kSmartMotion
        */
-    m_pidController.setReference(setPoint, CANSparkMax.ControlType.kSmartMotion);
+    m_pidController.setReference(setPoint, CANSparkMax.ControlType.kPosition);
     processVariable = m_encoder.getPosition(); 
     
     SmartDashboard.putNumber("SetPoint", setPoint);
@@ -155,7 +155,17 @@ public class Arm extends SubsystemBase {
   }
 
   public void armDrive(){
-    motor1.set(joystick.getRawAxis(1));
+    if (joystick.getRawButton(7)){
+      motor1.set(-0.75);
+    }
+
+    if (joystick.getRawButton(8)){
+      motor1.set(0.75);
+    }
+
+    if (joystick.getRawButton(9)){
+      motor1.set(0);
+    }
   }
 
 

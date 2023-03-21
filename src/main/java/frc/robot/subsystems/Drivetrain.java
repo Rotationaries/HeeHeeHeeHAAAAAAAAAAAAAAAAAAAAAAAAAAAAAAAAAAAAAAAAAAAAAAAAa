@@ -18,7 +18,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -84,7 +84,7 @@ public class Drivetrain extends SubsystemBase {
     // m_leftEncoder1.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     // m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     
-    ahrs = new AHRS(SerialPort.Port.kMXP);
+    ahrs = new AHRS(SPI.Port.kMXP);
 
     // resetEncoders();
     m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), 0, 0);
@@ -106,6 +106,10 @@ public class Drivetrain extends SubsystemBase {
       // the Field2d class lets us visualize our robot in the simulation GUI.
       SmartDashboard.putData("Field", m_fieldSim);
     }
+  }
+
+  public CANSparkMax getMotor1(){
+    return leftMotor1;
   }
 
   /**
@@ -190,6 +194,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
+    System.out.println(fwd);
+    System.out.println(rot);
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
@@ -281,14 +287,14 @@ public class Drivetrain extends SubsystemBase {
   }
   
   public void controllerMovement(XboxController controller){
-    //rate = (0.5 * -controller.getRawAxis(3)) + 0.5;
-    speed = -controller.getLeftY();
-    turn = controller.getRightX();
-    double left = speed + turn;
-    double right = speed - turn;
-    leftMotor1.set(left);
-    leftMotor2.set(-left);
-    rightMotor1.set(-right);
-    rightMotor2.set(right);
+    //ggrate = (0.5 * -controller.getRawAxis(3)) + 0.5;
+    // speed = -controller.getLeftY();
+    // turn = controller.getRightX();
+    // double left = speed + turn;
+    // double right = speed - turn;
+    // leftMotor1.set(left);
+    // leftMotor2.set(-left);
+    // rightMotor1.set(-right);
+    // rightMotor2.set(right);
   }
 }

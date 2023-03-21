@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Cascade;
+//import frc.robot.subsystems.Cascade;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 
@@ -42,6 +43,7 @@ public class Robot extends TimedRobot {
   private Intake m_intake = new Intake();
 
   private XboxController controller = new XboxController(0);
+  // private Joystick joystick = new Joystick ()
 
 
 
@@ -87,6 +89,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+
+    
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -98,7 +102,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    // double x = tx.getDouble(0.0);
+    //CommandScheduler.getInstance().run();// double x = tx.getDouble(0.0);
     // double y = ty.getDouble(0.0);
     // double area = ta.getDouble(0.0);
 
@@ -114,19 +118,20 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.cancel();
-    // }
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //m_drive.arcadeDrive(MathUtil.clamp(controller.getLeftY(), -0.8, 0.8), MathUtil.clamp(-controller.getRightX(), -0.8, 0.8));
-    m_drive.controllerMovement(controller);
-    m_cascade.cascadeDrive();
-    m_arm.armDrive();
-    m_intake.intakeDrive();
+    m_drive.arcadeDrive(-controller.getLeftY(), 0.9 * -controller.getRightX());
+    //m_drive.controllerMovement(controller);
+    //m_cascade.cascadeDrive();
+    m_cascade.testMotors();
+    //m_arm.armDrive();
+    //m_intake.intakeDrive();
 
   }
 
