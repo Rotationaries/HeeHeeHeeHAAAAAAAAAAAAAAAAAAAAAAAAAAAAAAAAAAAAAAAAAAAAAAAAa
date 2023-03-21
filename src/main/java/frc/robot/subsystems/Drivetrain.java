@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.hal.SimDouble;
@@ -16,10 +15,10 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -35,8 +34,6 @@ public class Drivetrain extends SubsystemBase {
   public static CANSparkMax leftMotor1 = new CANSparkMax(DriveConstants.kLeftMotor1Port, MotorType.kBrushless);
   public static CANSparkMax leftMotor2 = new CANSparkMax(DriveConstants.kLeftMotor2Port, MotorType.kBrushless);
 
-
-
   MotorControllerGroup m_leftMotors = new MotorControllerGroup(leftMotor1, leftMotor2);
 
 
@@ -50,15 +47,11 @@ public class Drivetrain extends SubsystemBase {
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
-  // m_drive.setSafetyEnabled(false);
-
   // The left-side drive encoder
   private final RelativeEncoder m_leftEncoder1 = leftMotor1.getEncoder();
   private final RelativeEncoder m_leftEncoder2 = leftMotor2.getEncoder();
   private final RelativeEncoder m_rightEncoder1 = rightMotor1.getEncoder();
   private final RelativeEncoder m_rightEncoder2 = rightMotor2.getEncoder();
-
-
 
   // The gyro sensor
   private final AHRS ahrs;
@@ -81,7 +74,7 @@ public class Drivetrain extends SubsystemBase {
   private static double speed;
   private static double turn;
 
-  public static XboxController controller = new XboxController(1);
+  public static XboxController controller = new XboxController(0);
 
   /** Creates a new ExampleSubsystem. */
 
@@ -91,7 +84,7 @@ public class Drivetrain extends SubsystemBase {
     // m_leftEncoder1.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     // m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     
-    ahrs = new AHRS(SPI.Port.kMXP);
+    ahrs = new AHRS(SerialPort.Port.kMXP);
 
     // resetEncoders();
     m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), 0, 0);
@@ -113,9 +106,6 @@ public class Drivetrain extends SubsystemBase {
       // the Field2d class lets us visualize our robot in the simulation GUI.
       SmartDashboard.putData("Field", m_fieldSim);
     }
-
-  
-
   }
 
   /**
@@ -153,9 +143,6 @@ public class Drivetrain extends SubsystemBase {
     m_fieldSim.setRobotPose(getPose());
     SmartDashboard.putNumber("ControllerY", -controller.getLeftY());
     SmartDashboard.putNumber("ControllerX", -controller.getRightX());
-
-    m_drive.setSafetyEnabled(false);
-    // m_drive.feed();
     
   }
 
@@ -179,8 +166,16 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
-  public Double currentPosition(){
-    return DriveConstants.kcircumference * (m_leftEncoder1.getPosition() + m_rightEncoder1.getPosition() + m_rightEncoder1.getPosition() + m_rightEncoder2.getPosition())/4;
+  public double getLeftEncoderVelocity() {
+    return (m_leftEncoder1.getVelocity() + m_leftEncoder2.getVelocity()) / 2;
+  }
+
+  public double getRightEncoderVelocity() {
+    return (m_rightEncoder1.getVelocity() + m_rightEncoder2.getVelocity()) / 2;
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(getLeftEncoderVelocity(), getRightEncoderVelocity());
   }
 
   // public DifferentialDriveWheelSpeeds getWheelSpeeds() {
@@ -253,6 +248,26 @@ public class Drivetrain extends SubsystemBase {
   //   return m_rightEncoder;
   // }
 
+  public double getLeftEncoder1Rotations() {
+    return m_leftEncoder1.getPosition();
+  }
+
+  public double getLeftEncoder2Rotations() {
+    return m_leftEncoder1.getPosition();
+  }
+
+  public double getRightEncoder1Rotations() {
+    return m_leftEncoder1.getPosition();
+  }
+
+  public double getRightEncoder2Rotations() {
+    return m_leftEncoder1.getPosition();
+  }
+
+  public double getAverageEncoderRotations() {
+    return (getLeftEncoder1Rotations()+getLeftEncoder2Rotations()+getRightEncoder1Rotations()+getRightEncoder2Rotations()) / 4;
+  }
+
   public void setMaxOutput(double maxOutput) {
     m_drive.setMaxOutput(maxOutput);
   }
@@ -266,22 +281,14 @@ public class Drivetrain extends SubsystemBase {
   }
   
   public void controllerMovement(XboxController controller){
-    // rate = (0.5 * -controller.getRawAxis(3)) + 0.5;
-    // speed = controller.getLeftY();
-    // turn = -controller.getRightX();
-    // double left = speed + turn;
-    // double right = speed - turn;
-    // leftMotor1.set(left);
-    // leftMotor2.set(-left);
-    // rightMotor1.set(right);
-    // rightMotor2.set(-right);
-
-    m_drive.arcadeDrive(-controller.getLeftY(), -controller.getRightX()); 
-    // leftMotor1.set(0.5);
-    // leftMotor2.set(0.5);
-    // rightMotor1.set(0.6);
-    // rightMotor2.set(-0.5);
-
-
+    //rate = (0.5 * -controller.getRawAxis(3)) + 0.5;
+    speed = -controller.getLeftY();
+    turn = controller.getRightX();
+    double left = speed + turn;
+    double right = speed - turn;
+    leftMotor1.set(left);
+    leftMotor2.set(-left);
+    rightMotor1.set(-right);
+    rightMotor2.set(right);
   }
 }

@@ -32,7 +32,7 @@ public class Cascade extends SubsystemBase {
   
   public boolean atStage;
 
-  private final Joystick joystick = new Joystick (0);
+  private final Joystick joystick = new Joystick (1);
 
 
   /** Creates a new CascadeSubsystem. */
@@ -173,19 +173,33 @@ public class Cascade extends SubsystemBase {
     // }
     // motor1.setVoltage(Volt1);
     // motor2.setVoltage(Volt2);
-    if(joystick.getRawButtonPressed(7)){
-      m_pidController1.setReference(CascadeConstants.kstage0, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(CascadeConstants.kstage0, CANSparkMax.ControlType.kSmartMotion);
+
+       if(joystick.getRawButtonPressed(7)){
+        System.out.println("7");
+        m_pidController1.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
+        m_pidController2.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
+      //m_cascadeMotors.set(-0.1);
+      // m_pidController1.setReference(0.5, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController2.setReference(0.5, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController1.setReference(CascadeConstants.kstage0, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController2.setReference(CascadeConstants.kstage0, CANSparkMax.ControlType.kSmartMotion);
     }
     if(joystick.getRawButtonPressed(8)){
-      m_pidController1.setReference(CascadeConstants.kstage1, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(CascadeConstants.kstage1, CANSparkMax.ControlType.kSmartMotion);
+      System.out.println("8");
+      m_pidController1.setReference(0.15, CANSparkMax.ControlType.kSmartMotion);
+      m_pidController2.setReference(0.15, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController1.setReference(CascadeConstants.kstage1, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController2.setReference(CascadeConstants.kstage1, CANSparkMax.ControlType.kSmartMotion);
     }
     if(joystick.getRawButtonPressed(9)){
+      System.out.println("9");
+      m_pidController1.setReference(0, CANSparkMax.ControlType.kSmartMotion);
+        m_pidController2.setReference(0, CANSparkMax.ControlType.kSmartMotion);
       m_pidController1.setReference(CascadeConstants.kstage2, CANSparkMax.ControlType.kSmartMotion);
       m_pidController2.setReference(CascadeConstants.kstage2, CANSparkMax.ControlType.kSmartMotion);
     }
     if(joystick.getRawButtonPressed(10)){
+      System.out.println("10");
       m_pidController1.setReference(CascadeConstants.kstage3, CANSparkMax.ControlType.kSmartMotion);
       m_pidController2.setReference(CascadeConstants.kstage3, CANSparkMax.ControlType.kSmartMotion);
     }
@@ -268,5 +282,19 @@ public class Cascade extends SubsystemBase {
   public RelativeEncoder getEncoder2() {
     return m_encoder2;
   }
+
+  public void testMotors(){
+    m_cascadeMotors.set(-0.1);
+  }
   
+  public void testTeleMotors(){
+
+  
+    
+
+    // m_pidController1.setReference(joystick.getRawAxis(1), CANSparkMax.ControlType.kSmartMotion);
+    // m_pidController2.setReference(joystick.getRawAxis(1), CANSparkMax.ControlType.kSmartMotion);
+
+  }
+
 }

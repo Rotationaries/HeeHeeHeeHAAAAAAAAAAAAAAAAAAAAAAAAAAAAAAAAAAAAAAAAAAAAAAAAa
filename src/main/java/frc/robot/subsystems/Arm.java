@@ -9,6 +9,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,30 +18,34 @@ public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
 
   final int deviceID = 8; //need to set a deciveID
-  CANSparkMax m_motor;
-  SparkMaxPIDController m_pidController;
-  RelativeEncoder m_encoder;
+  SparkMaxPIDController m_pidController = motor1.getPIDController();
+  public static CANSparkMax motor1 = new CANSparkMax(8, MotorType.kBrushless);
+  RelativeEncoder m_encoder = motor1.getEncoder();
   double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr, setPoint;
 
-  public Arm(double setPoint) {
+
+
+  Joystick joystick = new Joystick(1);
+
+
+  public Arm() {
     setPoint = this.setPoint;
   }
 
 
   public void initialize(){
     // initialize motor
-    m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
 
     /**
      * The RestoreFactoryDefaults method can be used to reset the configuration parameters
      * in the SPARK MAX to their factory default state. If no argument is passed, these
      * parameters will not persist between power cycles
      */
-    m_motor.restoreFactoryDefaults();
+    motor1.restoreFactoryDefaults();
 
     // initialze PID controller and encoder objects
-    m_pidController = m_motor.getPIDController();
-    m_encoder = m_motor.getEncoder();
+    m_pidController = motor1.getPIDController();
+    m_encoder = motor1.getEncoder();
 
     // PID coefficients
     kP = 5e-5; 
@@ -145,6 +151,12 @@ public class Arm extends SubsystemBase {
     
     SmartDashboard.putNumber("SetPoint", setPoint);
     SmartDashboard.putNumber("Process Variable", processVariable);
-    SmartDashboard.putNumber("Output", m_motor.getAppliedOutput());
+    SmartDashboard.putNumber("Output", motor1.getAppliedOutput());
   }
+
+  public void armDrive(){
+    motor1.set(joystick.getRawAxis(1));
+  }
+
+
 }

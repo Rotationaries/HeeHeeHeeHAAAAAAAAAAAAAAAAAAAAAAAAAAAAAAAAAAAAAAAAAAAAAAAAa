@@ -6,35 +6,50 @@ package frc.robot.subsystems;
 import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
 
   private CANSparkMax intakeMotor;
   private boolean isIntakeUp;
+  public Joystick joystick = new Joystick(1);
   /** Creates a new Intake. */
   public Intake()  {  
-    
+    System.out.println("Intake Started");
   }
 
   @Override
   public void periodic() {
-    System.out.println(IntakeConstants.CONVEYOR_SPEED);
+    
     // This method will be called once per scheduler run
-  }
-
-  
-  public void pullIn() {
-    intakeMotor.set(IntakeConstants.INTAKE_SPEED);
-  }
-
-  public void Eject() {
-    intakeMotor.set(-IntakeConstants.INTAKE_SPEED);
-  }
-  public void stopMotors() {
-    intakeMotor.set(0);
   }
   public boolean isIntakeUp() {
     return isIntakeUp;
   }
+
+  /**
+   * 
+   */
+  public void intakeDrive(){
+    if (joystick.getRawButton(11)){
+      System.out.println("11");
+      intakeMotor.set(0);
+    }
+  
+
+  if(joystick.getRawButton(2)){ //Eject
+    System.out.println("2");
+    intakeMotor.set(IntakeConstants.INTAKE_SPEED);
+  }
+
+  if (joystick.getRawButton(1)){ //Pullin
+    System.out.println("1");
+    intakeMotor.set(-IntakeConstants.INTAKE_SPEED);
+  }
+
 }
+}
+  
+
+

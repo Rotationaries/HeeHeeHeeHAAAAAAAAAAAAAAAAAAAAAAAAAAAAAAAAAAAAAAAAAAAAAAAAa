@@ -1,10 +1,15 @@
 package frc.robot;
 
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -88,11 +93,35 @@ public final class Constants {
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 3;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+    public static final double kMaxVoltageConstraint = 7;
+
+    public static final TrajectoryConstraint autoVoltageConstraint =
+    new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(
+            DriveConstants.ksVolts,
+            DriveConstants.kvVoltSecondsPerMeter,
+            DriveConstants.kaVoltSecondsSquaredPerMeter),
+            DriveConstants.kDriveKinematics,
+        kMaxVoltageConstraint);
+
+    public static final TrajectoryConfig config = new TrajectoryConfig(
+    AutoConstants.kMaxSpeedMetersPerSecond, 
+    AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    // Add kinematics to ensure max speed is actually obeyed
+      .setKinematics(DriveConstants.kDriveKinematics)
+    // Apply the voltage constraint
+      .addConstraint(autoVoltageConstraint);
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
+
+    public static final RamseteController controller = new RamseteController(kRamseteB, kRamseteZeta);
+    public static final SimpleMotorFeedforward feedForward = 
+    new SimpleMotorFeedforward(0.22, 1.98, 0.2);
   }
+
+
 
   public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -128,7 +157,7 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static double CONVEYOR_SPEED = .5;
-    public static double INTAKE_SPEED = -.65;
+    public static double INTAKE_SPEED = -1.65;
     public static double INDEXER_SPEED = .7;  
   }
 
