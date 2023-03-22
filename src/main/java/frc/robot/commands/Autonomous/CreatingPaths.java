@@ -68,18 +68,18 @@ public class CreatingPaths extends CommandBase {
   }
 
 public CommandBase dockPath(){
-  // PathPlannerTrajectory traj = PathPlanner.loadPath("DirectDock-M", AutoConstants.kMaxSpeedMetersPerSecond, 
-  // AutoConstants.kMaxAccelerationMetersPerSecondSquared);
-  // //return Commands.sequence(driveCommand(traj), new Balance());
-  return Commands.sequence(new PrintingCommand());
+   PathPlannerTrajectory traj = PathPlanner.loadPath("DirectDock-M", AutoConstants.kMaxSpeedMetersPerSecond, 
+  AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+  return Commands.sequence(driveCommand(traj), new Balance());
+  //return Commands.sequence(new PrintingCommand());
   
 }
 
 public Command driveCommand(PathPlannerTrajectory trajectory){
   RamseteCommand command = new RamseteCommand(traj, m_drive::getPose, AutoConstants.controller, 
     AutoConstants.feedforward, DriveConstants.kDriveKinematics, m_drive::getWheelSpeeds, 
-    new PIDController(DriveConstants.kPDriveVel, 0, 0), 
-    new PIDController(DriveConstants.kPDriveVel, 0, 0), m_drive::tankDriveVolts, m_drive);
+    new PIDController(0.5, 0, 0),
+    new PIDController(0.5, 0, 0), m_drive::tankDriveVolts, m_drive);
     return Commands.sequence(command);
 }
 

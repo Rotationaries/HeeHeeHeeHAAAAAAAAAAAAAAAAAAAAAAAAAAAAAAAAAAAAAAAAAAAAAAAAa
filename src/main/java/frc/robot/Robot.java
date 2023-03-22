@@ -6,7 +6,7 @@ package frc.robot;
 
 import com.revrobotics.REVPhysicsSim;
 
-import edu.wpi.first.math.MathUtil;
+//import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -17,11 +17,10 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Cascade;
 //import frc.robot.subsystems.Cascade;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
+// import frc.robot.subsystems.Intake;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -39,8 +38,8 @@ public class Robot extends TimedRobot {
 
   private Drivetrain m_drive = new Drivetrain();
   private Cascade m_cascade = new Cascade();
-  private Arm m_arm = new Arm();
-  private Intake m_intake = new Intake();
+  //private Arm m_arm = new Arm();
+  // private Intake m_intake = new Intake();
 
   private XboxController controller = new XboxController(0);
   // private Joystick joystick = new Joystick ()
@@ -89,7 +88,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
+    //m_drive.arcadeDrive(.5, 0);
     
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -126,12 +125,13 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    m_drive.arcadeDrive(-controller.getLeftY(), 0.9 * -controller.getRightX());
+    // m_drive.arcadeDrive(-controller.getLeftY(), 0.9 * -controller.getRightX());
     //m_drive.controllerMovement(controller);
     //m_cascade.cascadeDrive();
-    m_cascade.testMotors();
+    // m_cascade.testMotors();
     //m_arm.armDrive();
     //m_intake.intakeDrive();
+    m_drive.arcadeDrive(0.5, 0);
 
   }
 

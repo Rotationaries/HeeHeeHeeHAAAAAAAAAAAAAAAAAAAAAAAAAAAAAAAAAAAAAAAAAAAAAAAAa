@@ -48,9 +48,9 @@ public final class Constants {
     // for *your* robot's drive.
     // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
     // values for your robot.
-    public static final double ksVolts = 0.22;
-    public static final double kvVoltSecondsPerMeter = 1.98;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+    public static final double ksVolts = 0.1452;
+    public static final double kvVoltSecondsPerMeter = 2.8382;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.20793;
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
     // These characterization values MUST be determined either experimentally or theoretically
@@ -92,7 +92,7 @@ public final class Constants {
 
   public static final class AutoConstants {
     public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1;
     public static final double kMaxVoltageConstraint = 7;
 
     public static final TrajectoryConstraint autoVoltageConstraint =
@@ -141,7 +141,7 @@ public final class Constants {
     // public static final boolean kCascadeEncoder1Reversed = false;
     // public static final int[] kCascadeEncoder2Ports = new int[] {12,13};
     // public static final boolean kCascadeEncoder2Reversed = false;
-    public static final double stallCurrent = 105;
+    public static final double stallCurrent = 15;
     public static final double nVolt = 12;
     public static final double testSetpoint = 100;
     public static final double testVelocity = 25;

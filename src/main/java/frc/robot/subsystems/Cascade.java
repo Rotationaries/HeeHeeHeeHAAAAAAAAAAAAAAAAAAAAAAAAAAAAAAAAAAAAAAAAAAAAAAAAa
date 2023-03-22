@@ -174,10 +174,10 @@ public class Cascade extends SubsystemBase {
     // motor1.setVoltage(Volt1);
     // motor2.setVoltage(Volt2);
 
-       if(joystick.getRawButtonPressed(7)){
-        System.out.println("7");
-        m_pidController1.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
-        m_pidController2.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
+    if(joystick.getRawButtonPressed(7)){
+      System.out.println("7");
+      m_pidController1.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
+      m_pidController2.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
       //m_cascadeMotors.set(-0.1);
       // m_pidController1.setReference(0.5, CANSparkMax.ControlType.kSmartMotion);
       // m_pidController2.setReference(0.5, CANSparkMax.ControlType.kSmartMotion);
@@ -284,7 +284,13 @@ public class Cascade extends SubsystemBase {
   }
 
   public void testMotors(){
-    m_cascadeMotors.set(-0.1);
+    // if(!atTop()){
+    //   m_cascadeMotors.set(-0.1);
+    // }else if (){
+    //   m_cascadeMotors.set(0);
+    // }
+    SmartDashboard.putNumber("Encoder 1 Count", m_encoder1.getPosition());
+    SmartDashboard.putNumber("Encoder 2 Count", m_encoder2.getPosition());
   }
   
   public void testTeleMotors(){
