@@ -48,9 +48,15 @@ public class Robot extends TimedRobot {
   private Drivetrain m_drive = new Drivetrain();
   private Cascade m_cascade = new Cascade();
   private Arm m_arm = new Arm();
+<<<<<<< HEAD
  private Intake m_intake = new Intake();
 
   //private CANSparkMax  armMotor = new CANSparkMax(8, MotorType.kBrushless);
+=======
+  private Intake m_intake = new Intake();
+
+  private CANSparkMax  armMotor = new CANSparkMax(8, MotorType.kBrushless);
+>>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
 
   private XboxController controller = new XboxController(0);
    private Joystick joystick = new Joystick (1);
@@ -101,12 +107,21 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     //m_drive.arcadeDrive(.5, 0);
     
+<<<<<<< HEAD
      m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // // // // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+=======
+    //  m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+    // // // // schedule the autonomous command (example)
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.schedule();
+    // }
+>>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
 
 
     //PathPlannerTrajectory traj = PathPlanner.loadPath("TestNew", AutoConstants.kMaxSpeedMetersPerSecond, 
@@ -147,6 +162,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+<<<<<<< HEAD
     //m_drive.arcadeDrive(-controller.getLeftY(), 0.9 * -controller.getRightX());
     m_drive.controllerMovement(controller);
     m_cascade.cascadeStagedDrive();
@@ -163,6 +179,24 @@ public class Robot extends TimedRobot {
     //   armMotor.set(-0.15);
     // }
     // else {armMotor.set(0);}
+=======
+    m_drive.arcadeDrive(-controller.getLeftY(), 0.9 * -controller.getRightX());
+    // m_drive.controllerMovement(controller);
+    //m_cascade.cascadeStagedDrive();
+    m_cascade.joyCascade();
+    // //m_cascade.autoCascadeDrive(CascadeConstants.pos3FromPos2);
+    // //m_cascade.testMotors();
+     //m_arm.armDrive();
+    m_intake.intakeDrive();
+
+    if (joystick.getRawButton(3)){
+      armMotor.set(0.35);
+    }
+    else if (joystick.getRawButton(4)){
+      armMotor.set(-0.15);
+    }
+    else {armMotor.set(0);}
+>>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
 
     
     //m_drive.arcadeDrive(0.5, 0);

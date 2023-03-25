@@ -13,12 +13,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
 
+<<<<<<< HEAD
   private CANSparkMax intakeMotor = new CANSparkMax(10, MotorType.kBrushless);
+=======
+  private CANSparkMax intakeMotor = new CANSparkMax(9, MotorType.kBrushless);
+>>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
   private boolean isIntakeUp;
   public Joystick joystick = new Joystick(1);
   /** Creates a new Intake. */
   public Intake()  {   
     System.out.println("Intake Started");
+<<<<<<< HEAD
 
     
   }
@@ -32,6 +37,19 @@ public class Intake extends SubsystemBase {
     return isIntakeUp;
   }
 
+=======
+  }
+
+  @Override
+  public void periodic() {
+    
+    // This method will be called once per scheduler run
+  }
+  public boolean isIntakeUp() {
+    return isIntakeUp;
+  }
+
+>>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
   /**
    * 
    */
@@ -48,6 +66,7 @@ public class Intake extends SubsystemBase {
       intakeMotor.set(-IntakeConstants.INTAKE_SPEED);
     }
     else {intakeMotor.set(0);}
+<<<<<<< HEAD
   }
 
   public void pullIn() {
@@ -57,6 +76,12 @@ public class Intake extends SubsystemBase {
   public void eject() {
     intakeMotor.set(IntakeConstants.INTAKE_SPEED);
   }
+=======
+
+    
+
+}
+>>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
 }
   
 

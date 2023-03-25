@@ -87,10 +87,17 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     m_rightMotors.setInverted(true);
 
+<<<<<<< HEAD
     /*leftMotor1.setOpenLoopRampRate(2);
     leftMotor2.setOpenLoopRampRate(2);
     rightMotor1.setOpenLoopRampRate(2);
     rightMotor2.setOpenLoopRampRate(2);*/
+=======
+    leftMotor1.setOpenLoopRampRate(2);
+    leftMotor2.setOpenLoopRampRate(2);
+    rightMotor1.setOpenLoopRampRate(2);
+    rightMotor2.setOpenLoopRampRate(2);
+>>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
 
     // m_leftEncoder1.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     // m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
