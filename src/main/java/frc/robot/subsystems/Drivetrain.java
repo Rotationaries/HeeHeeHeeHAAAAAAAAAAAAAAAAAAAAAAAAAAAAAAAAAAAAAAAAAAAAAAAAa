@@ -25,9 +25,12 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.Autonomous.Balance;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -80,6 +83,11 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain() {
     m_rightMotors.setInverted(true);
+
+    leftMotor1.setOpenLoopRampRate(2);
+    leftMotor2.setOpenLoopRampRate(2);
+    rightMotor1.setOpenLoopRampRate(2);
+    rightMotor2.setOpenLoopRampRate(2);
 
     // m_leftEncoder1.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     // m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
@@ -286,6 +294,18 @@ public class Drivetrain extends SubsystemBase {
     return Math.IEEEremainder(ahrs.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
   
+  public double getRoll(){
+    return ahrs.getRoll();
+  }
+
+  public double getPitch(){
+    return ahrs.getPitch();
+  }
+
+  public Command getBalance(){
+    return Commands.sequence(new Balance());
+  }
+
   public void controllerMovement(XboxController controller){
     //ggrate = (0.5 * -controller.getRawAxis(3)) + 0.5;
     // speed = -controller.getLeftY();

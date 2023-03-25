@@ -4,32 +4,55 @@
 
 package frc.robot.commands.Autonomous;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 public class Balance extends CommandBase {
-   Drivetrain m_drive;
-   SparkMaxPIDController m_pidController;
-
   /** Creates a new Balance. */
+  Drivetrain m_drive;
+  double yAxisRate;
+  double xAxisRate;
+
   public Balance() {
     // Use addRequirements() here to declare subsystem dependencies.
+    
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_pidController = m_drive.getMotor1().getPIDController();
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //double speed = m_pidController.setReference()
-  }
+    double pitchAngleDegrees = m_drive.getPitch();
+    double rollAngleDegrees = m_drive.getRoll();
+
+    // Control drive system automatically, 
+    // driving in reverse direction of pitch/roll angle,
+    // with a magnitude based upon the angle
+    
+    if ( Math.abs(pitchAngleDegrees) > Math.abs(Constants.BalanceConstants.kOffBalanceAngleThresholdDegrees) ) {
+        double pitchAngleRadians = pitchAngleDegrees * (Math.PI / 180.0);
+        xAxisRate = Math.sin(pitchAngleRadians) * -1;
+    }
+    else if ( Math.abs(pitchAngleDegrees) < Math.abs(Constants.BalanceConstants.kOffBalanceAngleThresholdDegrees) ){
+      double pitchAngleRadians = pitchAngleDegrees * (Math.PI / 180.0);
+      xAxisRate = Math.sin(pitchAngleRadians);
+    }
+
+    if ( (Math.abs(pitchAngleDegrees) > Math.abs(Constants.BalanceConstants.kOffBalanceAngleThresholdDegrees)) ) {
+        double rollAngleRadians = rollAngleDegrees * (Math.PI / 180.0);
+        yAxisRate = Math.sin(rollAngleRadians) * -1;
+    }
+    else if ((Math.abs(pitchAngleDegrees) < Math.abs(Constants.BalanceConstants.kOffBalanceAngleThresholdDegrees))) {
+      double rollAngleRadians = rollAngleDegrees * (Math.PI / 180.0);
+      yAxisRate = Math.sin(rollAngleRadians);
+    }
+}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -38,6 +61,6 @@ public class Balance extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_drive.getPitch() == Constants.BalanceConstants.kOffBalanceAngleThresholdDegrees && m_drive.getRoll() == Constants.BalanceConstants.kOffBalanceAngleThresholdDegrees;
   }
 }
