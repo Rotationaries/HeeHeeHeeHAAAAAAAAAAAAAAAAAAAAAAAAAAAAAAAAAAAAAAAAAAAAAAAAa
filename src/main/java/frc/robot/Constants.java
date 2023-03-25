@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
@@ -39,6 +40,8 @@ public final class Constants {
     public static final double kWheelDiameterMeters = 0.15;
     public static final double kEncoderDistancePerPulse =
         // Assumes the encoders are directly mounted on the wheel shafts
+        //GR: 22:48
+        //new: 12:36
         (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
 
     public static final boolean kGyroReversed = true;
@@ -48,9 +51,9 @@ public final class Constants {
     // for *your* robot's drive.
     // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
     // values for your robot.
-    public static final double ksVolts = 0.1452;
-    public static final double kvVoltSecondsPerMeter = 2.8382;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.20793;
+    public static final double ksVolts = 0.12211;
+    public static final double kvVoltSecondsPerMeter = 2.8704;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.39875;
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
     // These characterization values MUST be determined either experimentally or theoretically
@@ -79,11 +82,13 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = 0; //set this
     public static final double kMaxAccelerationMetersPerSecondSquared = 0; //set this
 
-    public static final double kP = 3.2181;
+    public static final double kP = 0.01397;
     public static final double kI = 0;
     public static final double kD = 0;
 
     public static final double kcircumference = kWheelDiameterMeters * Math.PI;
+    public static final double DELTA_FORWARD = .075;
+    public static final double DELTA_TURNING = .075;
   }
 
   public static final class OIConstants {
@@ -91,10 +96,12 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 1;
-    public static final double kMaxVoltageConstraint = 7;
-
+    public static final double kMaxSpeedMetersPerSecond = .9;
+    public static final double kMaxAccelerationMetersPerSecondSquared = .6;
+    public static final double kMaxVoltageConstraint = 12;
+    public static final PIDController leftPID = new PIDController(DriveConstants.kP, 0, 0);
+    public static final PIDController rightPID = new PIDController(DriveConstants.kP, 0, 0);
+    
     public static final TrajectoryConstraint autoVoltageConstraint =
     new DifferentialDriveVoltageConstraint(
         new SimpleMotorFeedforward(
@@ -107,7 +114,7 @@ public final class Constants {
     public static final TrajectoryConfig config = new TrajectoryConfig(
     AutoConstants.kMaxSpeedMetersPerSecond, 
     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-    // Add kinematics to ensure max speed is actually obeyed
+    // Add kinematics to ensure max     speed is actually obeyed
       .setKinematics(DriveConstants.kDriveKinematics)
     // Apply the voltage constraint
       .addConstraint(autoVoltageConstraint);
@@ -118,10 +125,12 @@ public final class Constants {
 
     public static final RamseteController controller = new RamseteController(kRamseteB, kRamseteZeta);
     public static final SimpleMotorFeedforward feedforward = 
-    new SimpleMotorFeedforward(0.22, 1.98, 0.2);
+    new SimpleMotorFeedforward(0, 0, 0);
   }
 
-
+  public static final class BalanceConstants {
+    public static double kOffBalanceAngleThresholdDegrees = 0;
+  }
 
   public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -149,31 +158,15 @@ public final class Constants {
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kstage0 = 0;
-    public static final double kstage1 = 1;
-    public static final double kstage2 = 2;
-    public static final double kstage3 = 3;
-
+    public static final double kstage1 = -5.8826;
+    public static final double kstage2 = -13.17;
+    public static final double kstage3 = -19.04;
+    public static final double rotToTickConver = 0;
   }
 
   public static final class IntakeConstants {
     public static double CONVEYOR_SPEED = .5;
-    public static double INTAKE_SPEED = -0.5
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    ;
+    public static double INTAKE_SPEED = -0.5;
     public static double INDEXER_SPEED = .7;  
   }
 

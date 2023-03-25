@@ -4,14 +4,52 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
+import com.pathplanner.lib.commands.PPRamseteCommand;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.CascadeConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autonomous.CreatingPaths;
+import frc.robot.commands.Autonomous.FollowingPath;
+import frc.robot.commands.Autonomous.SkyBalance;
+//import frc.robot.commands.Autonomous.FollowingPath;
+//import frc.robot.commands.Autonomous.CreatingPaths;
+//import frc.robot.commands.Autonomous.FollowingPath;
 import frc.robot.commands.Drive.Drive;
-import frc.robot.commands.Drive.DriveDistance;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Cascade;
 import frc.robot.subsystems.Drivetrain;
+//import frc.robot.subsystems.Intake;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,15 +60,29 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain m_robotDrive = new Drivetrain();
-  private final CreatingPaths m_pathCreator = new CreatingPaths(m_robotDrive, null);
+  //private final CreatingPaths m_pathCreator = new CreatingPaths(m_robotDrive);
+  private PathPlannerTrajectory path = new PathPlannerTrajectory();
+  //private Map<String, Command> eventMap = new HashMap<>();
+  public PIDController x = new PIDController(0.2, 0, 0);
+  public PIDController y = new PIDController(0.2,0,0);
+  private List<PathPlannerTrajectory> alist = new ArrayList<>();
+  private List<Command> clist = new ArrayList<>();
+  private String fileName;
+  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private Map<String, Command> eventMap = new HashMap<>();
+  private Cascade cascade = new Cascade();
+  private Arm arm = new Arm();
+  //private Intake intake = new Intake();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /** The container for the robot. Containssubsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    alist = PathPlanner.loadPathGroup(fileName, AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+
     configureBindings();
   }
 
@@ -50,7 +102,8 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_robotDrive.exampleMethodCommand());
+    m_driverController.y().whileTrue(m_robotDrive.exampleMethodCommand());
+    m_driverController.b().whileTrue(m_robotDrive.getBalance());
   }
 
   public Drivetrain getRobotDrive() {
@@ -59,6 +112,136 @@ public class RobotContainer {
 
   public void zeroAllOutputs() {
     m_robotDrive.tankDriveVolts(0, 0);
+    
+  }
+
+  public void configureAuto() {
+    List<PathPlannerTrajectory> paths1 = PathPlanner.loadPathGroup("DirectDock-M", AutoConstants.kMaxSpeedMetersPerSecond,
+    AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    List<PathPlannerTrajectory> paths2 = PathPlanner.loadPathGroup("1CO-BlueB", AutoConstants.kMaxSpeedMetersPerSecond,
+    AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    List<PathPlannerTrajectory> paths3 = PathPlanner.loadPathGroup("1CO-BlueM", AutoConstants.kMaxSpeedMetersPerSecond,
+    AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    List<PathPlannerTrajectory> paths4 = PathPlanner.loadPathGroup("1CO-BlueT", AutoConstants.kMaxSpeedMetersPerSecond,
+    AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    List<PathPlannerTrajectory> paths5 = PathPlanner.loadPathGroup("1CO-RedB", AutoConstants.kMaxSpeedMetersPerSecond,
+    AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    List<PathPlannerTrajectory> paths6 = PathPlanner.loadPathGroup("1CO-RedM", AutoConstants.kMaxSpeedMetersPerSecond,
+    AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    List<PathPlannerTrajectory> paths7 = PathPlanner.loadPathGroup("1CO-RedT", AutoConstants.kMaxSpeedMetersPerSecond,
+    AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+
+    Command m_directDock = new SequentialCommandGroup(
+      new WaitCommand(4),
+      new FollowPathWithEvents(new FollowingPath(paths1.get(0)), paths1.get(0).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths1.get(1)), paths1.get(1).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths1.get(2)), paths1.get(2).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths1.get(3)), paths1.get(3).getMarkers(), eventMap),
+      new SkyBalance(m_robotDrive)
+    );
+
+    Command m_blueB = new SequentialCommandGroup(
+      new WaitCommand(4),
+      new FollowPathWithEvents(new FollowingPath(paths2.get(0)), paths2.get(0).getMarkers(), eventMap),
+      new InstantCommand(() -> { cascade.autoCascadeDrive(CascadeConstants.kstage1);}, cascade),
+      new InstantCommand(() -> { arm.armPID(-45);}, arm),
+    //  new InstantCommand(() -> { intake.pullIn();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths2.get(1)), paths2.get(1).getMarkers(), eventMap),
+     // new InstantCommand(() -> { intake.eject(); }, intake),
+      new FollowPathWithEvents(new FollowingPath(paths2.get(2)), paths2.get(2).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths2.get(3)), paths2.get(3).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths2.get(4)), paths2.get(4).getMarkers(), eventMap),
+      new SkyBalance(m_robotDrive)
+    );
+
+    Command m_blueM = new SequentialCommandGroup(
+      new WaitCommand(4),
+      new FollowPathWithEvents(new FollowingPath(paths3.get(0)), paths3.get(0).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths3.get(1)), paths3.get(1).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths3.get(2)), paths3.get(2).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths3.get(3)), paths3.get(3).getMarkers(), eventMap),
+      new InstantCommand(() -> {cascade.autoCascadeDrive(CascadeConstants.kstage1);}, cascade),
+      new InstantCommand(() -> {arm.armPID(-45);}, arm),
+     // new InstantCommand(() -> { intake.pullIn();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths3.get(4)), paths2.get(4).getMarkers(), eventMap),
+     // new InstantCommand(() -> { intake.eject();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths3.get(5)), paths2.get(5).getMarkers(), eventMap),
+      new SkyBalance(m_robotDrive)
+    );
+
+    Command m_blueT = new SequentialCommandGroup(
+      new WaitCommand(4),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(0)), paths4.get(0).getMarkers(), eventMap),
+      new InstantCommand(() -> {cascade.autoCascadeDrive(CascadeConstants.kstage1);}, cascade),
+      new InstantCommand(() -> {arm.armPID(-45);}, arm),
+      //new InstantCommand(() -> { intake.pullIn();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(1)), paths4.get(1).getMarkers(), eventMap),
+      //new InstantCommand(() -> { intake.eject();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(2)), paths4.get(2).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(3)), paths4.get(3).getMarkers(), eventMap),
+      new SkyBalance(m_robotDrive)
+    );
+
+    Command m_redB = new SequentialCommandGroup(
+      new WaitCommand(4),
+      new FollowPathWithEvents(new FollowingPath(paths5.get(0)), paths5.get(0).getMarkers(), eventMap),
+      new InstantCommand(() -> {cascade.autoCascadeDrive(CascadeConstants.kstage1);}, cascade),
+      new InstantCommand(() -> {arm.armPID(-45);}, arm),
+    //  new InstantCommand(() -> { intake.pullIn();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(1)), paths4.get(1).getMarkers(), eventMap),
+    //  new InstantCommand(() -> { intake.eject();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(2)), paths4.get(2).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(3)), paths4.get(3).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(4)), paths4.get(4).getMarkers(), eventMap),
+      new SkyBalance(m_robotDrive)
+    );
+
+    Command m_redM = new SequentialCommandGroup(
+      new WaitCommand(4),
+      new FollowPathWithEvents(new FollowingPath(paths5.get(0)), paths5.get(0).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths5.get(1)), paths5.get(1).getMarkers(), eventMap),
+      new InstantCommand(() -> {cascade.autoCascadeDrive(CascadeConstants.kstage1);}, cascade),
+      new InstantCommand(() -> {arm.armPID(-45);}, arm),
+    //  new InstantCommand(() -> { intake.pullIn();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(2)), paths4.get(2).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(3)), paths4.get(3).getMarkers(), eventMap),
+    //  new InstantCommand(() -> { intake.eject();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(4)), paths4.get(4).getMarkers(), eventMap),
+      new SkyBalance(m_robotDrive)
+    );
+
+    Command m_redT = new SequentialCommandGroup(
+      new WaitCommand(4),
+      new FollowPathWithEvents(new FollowingPath(paths5.get(0)), paths5.get(0).getMarkers(), eventMap),
+      new InstantCommand(() -> {cascade.autoCascadeDrive(CascadeConstants.kstage1);}, cascade),
+      new InstantCommand(() -> {arm.armPID(-45);}, arm),
+    //  new InstantCommand(() -> { intake.pullIn();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(1)), paths4.get(1).getMarkers(), eventMap),
+    //  new InstantCommand(() -> { intake.eject();}, intake),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(2)), paths4.get(2).getMarkers(), eventMap),
+      new FollowPathWithEvents(new FollowingPath(paths4.get(3)), paths4.get(3).getMarkers(), eventMap),
+      new SkyBalance(m_robotDrive)
+    );
+
+    m_chooser.setDefaultOption("Direct Dock", m_directDock);
+    m_chooser.addOption("BlueB", m_blueB);
+    m_chooser.addOption("BlueM", m_blueM);
+    m_chooser.addOption("BlueT", m_blueT);
+    m_chooser.addOption("RedB", m_redB);
+    m_chooser.addOption("RedM", m_redM);
+    m_chooser.addOption("RedT", m_redT);
+
+    Shuffleboard
+    
+    
+    /*eventMap.put("turn1", new PrintCommand("passed marker 1"));
+    eventMap.put("turn2", new PrintCommand("passed marker 2"));
+    eventMap.put("turn3", new PrintCommand("passed marker 3"));
+    eventMap.put("turn4", new PrintCommand("passed marker 4"));*/
+
+    // for(int i=0; i<alist.size(); i++) {
+    //   clist.add(new FollowPathWithEvents(new FollowingPath(alist.get(i), fileName), alist.get(i).getMarkers(), eventMap));
+    // }
   }
 
   /**
@@ -69,8 +252,33 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     //return new CreatingPaths(m_robotDrive, "DirectDock-M");
-    return m_pathCreator.dockPath();
+    //return m_pathCreator.dockPath();
     //return new DriveDistance(0.5, m_robotDrive);
     //PathPlannerTrajectory traj = PathPlanner.loadPath("1CO1CU-B",new PathConstraints(2, 1.5));
+    
+    /*PathPlannerTrajectory traj = PathPlanner.loadPath("TestNew", AutoConstants.kMaxSpeedMetersPerSecond, 
+      AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+      System.out.println(traj);
+    PPRamseteCommand command = new PPRamseteCommand(traj, m_robotDrive::getPose, new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta), 
+    AutoConstants.feedforward, DriveConstants.kDriveKinematics, m_robotDrive::getWheelSpeeds, 
+    x, y, m_robotDrive::tankDriveVolts, m_robotDrive); 
+  // ArrayList<PathPoint> pointlist = new ArrayList<PathPoint>(Arrays.asList(new PathPoint(new Translation2d(1.0,1.0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0))));
+
+    
+  return command.andThen(() -> m_robotDrive.tankDriveVolts(0,0));*/
+
+  //return m_chooser.getSelected();
+
+
+  path = PathPlanner.loadPath("DirectDock-M", new PathConstraints(AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+  //paths = PathPlanner.loadPathGroup("1CO", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+  return new SequentialCommandGroup(
+    new WaitCommand(4),
+    new FollowPathWithEvents(new FollowingPath(path), path.getMarkers(), eventMap));
+
+  /*return new SequentialCommandGroup(
+    new WaitCommand(4),
+    clist.split());*/
   }
 }
+

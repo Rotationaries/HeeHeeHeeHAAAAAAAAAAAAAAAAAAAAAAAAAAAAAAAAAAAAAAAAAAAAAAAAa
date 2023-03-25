@@ -102,6 +102,10 @@ public class Vision extends SubsystemBase {
   // }
 
 
+  public void AlignWithTool(){
+    
+  }
+
 
   @Override
   public void periodic() {

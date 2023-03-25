@@ -9,10 +9,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.CascadeConstants;
 
 public class Cascade extends SubsystemBase {
@@ -32,16 +36,27 @@ public class Cascade extends SubsystemBase {
   
   public boolean atStage;
 
+  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1.5);
+
+  private final TrapezoidProfile.Constraints m_constraints =
+  new TrapezoidProfile.Constraints(0.75, 0.4);
+
+  private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
+  private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
+
   private final Joystick joystick = new Joystick (1);
+  private static double kDt = 0.02;
 
 
   /** Creates a new CascadeSubsystem. */
   public Cascade() {
     m_pidController1 = motor1.getPIDController();
+    motor1.setOpenLoopRampRate(2);
+    motor2.setOpenLoopRampRate(2);
 
-    kP = 0.1; 
-    kI = 1e-4;
-    kD = 1; 
+    kP = 0.05; 
+    kI = 0;
+    kD = 0; 
     kIz = 0; 
     kFF = 0; 
     kMaxOutput = 1; 
@@ -160,24 +175,22 @@ public class Cascade extends SubsystemBase {
     SmartDashboard.putNumber("Process Variable", processVariable);
     SmartDashboard.putNumber("Output", motor1.getAppliedOutput());
 
-    cascadeDrive();
+    // cascadeDrive();
+
+    
 
   }
 
-  public void cascadeDrive() {
+  public void cascadeStagedDrive() {
     atStage = false;
-    // var batteryVoltage = RobotController.getBatteryVoltage();
-    // if (Math.max(Math.abs(Volt1), Math.abs(Volt2)) > batteryVoltage) {
-    //   Volt1 *= batteryVoltage / 12.0;
-    //   Volt2 *= batteryVoltage / 12.0;
-    // }
-    // motor1.setVoltage(Volt1);
-    // motor2.setVoltage(Volt2);
 
     if(joystick.getRawButtonPressed(7)){
       System.out.println("7");
-      m_pidController1.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
+
+      //m_goal = new TrapezoidProfile.State(CascadeConstants.kstage1,0.3);
+      autoCascadeDrive(Constants.CascadeConstants.kstage1);
+      // m_pidController1.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController2.setReference(-0.15, CANSparkMax.ControlType.kSmartMotion);
       //m_cascadeMotors.set(-0.1);
       // m_pidController1.setReference(0.5, CANSparkMax.ControlType.kSmartMotion);
       // m_pidController2.setReference(0.5, CANSparkMax.ControlType.kSmartMotion);
@@ -186,57 +199,34 @@ public class Cascade extends SubsystemBase {
     }
     if(joystick.getRawButtonPressed(8)){
       System.out.println("8");
-      m_pidController1.setReference(0.15, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(0.15, CANSparkMax.ControlType.kSmartMotion);
+      autoCascadeDrive(Constants.CascadeConstants.kstage2);
+
+      // m_pidController1.setReference(0.15, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController2.setReference(0.15, CANSparkMax.ControlType.kSmartMotion);
       // m_pidController1.setReference(CascadeConstants.kstage1, CANSparkMax.ControlType.kSmartMotion);
       // m_pidController2.setReference(CascadeConstants.kstage1, CANSparkMax.ControlType.kSmartMotion);
     }
     if(joystick.getRawButtonPressed(9)){
       System.out.println("9");
-      m_pidController1.setReference(0, CANSparkMax.ControlType.kSmartMotion);
-        m_pidController2.setReference(0, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController1.setReference(CascadeConstants.kstage2, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(CascadeConstants.kstage2, CANSparkMax.ControlType.kSmartMotion);
+      autoCascadeDrive(Constants.CascadeConstants.kstage3);
+
+      // m_pidController1.setReference(0, CANSparkMax.ControlType.kSmartMotion);
+      //   m_pidController2.setReference(0, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController1.setReference(CascadeConstants.kstage2, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController2.setReference(CascadeConstants.kstage2, CANSparkMax.ControlType.kSmartMotion);
     }
     if(joystick.getRawButtonPressed(10)){
       System.out.println("10");
-      m_pidController1.setReference(CascadeConstants.kstage3, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(CascadeConstants.kstage3, CANSparkMax.ControlType.kSmartMotion);
+      autoCascadeDrive(Constants.CascadeConstants.kstage0);
+
+      // m_pidController1.setReference(CascadeConstants.kstage3, CANSparkMax.ControlType.kSmartMotion);
+      // m_pidController2.setReference(CascadeConstants.kstage3, CANSparkMax.ControlType.kSmartMotion);
     }
-    atStage = true;
+
     
   }
 
-  public void cascadeDrive(double setpoint) {
-    atStage = false;
-    // var batteryVoltage = RobotController.getBatteryVoltage();
-    // if (Math.max(Math.abs(Volt1), Math.abs(Volt2)) > batteryVoltage) {
-    //   Volt1 *= batteryVoltage / 12.0;
-    //   Volt2 *= batteryVoltage / 12.0;
-    // }
-    // motor1.setVoltage(Volt1);
-    // motor2.setVoltage(Volt2);
-    if(joystick.getRawButtonPressed(7)){
-      m_pidController1.setReference(CascadeConstants.kstage0, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(CascadeConstants.kstage0, CANSparkMax.ControlType.kSmartMotion);
-    }
-    if(joystick.getRawButtonPressed(8)){
-      m_pidController1.setReference(CascadeConstants.kstage1, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(CascadeConstants.kstage1, CANSparkMax.ControlType.kSmartMotion);
-    }
-    if(joystick.getRawButtonPressed(9)){
-      m_pidController1.setReference(CascadeConstants.kstage2, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(CascadeConstants.kstage2, CANSparkMax.ControlType.kSmartMotion);
-    }
-    if(joystick.getRawButtonPressed(10)){
-      m_pidController1.setReference(CascadeConstants.kstage3, CANSparkMax.ControlType.kSmartMotion);
-      m_pidController2.setReference(CascadeConstants.kstage3, CANSparkMax.ControlType.kSmartMotion);
-    }
-    atStage = true;
-    
-  } 
 
-  
 
   public boolean atBottom() {
     return m_encoder1.getPosition() == 0 && m_encoder2.getPosition() == 0;
@@ -289,17 +279,74 @@ public class Cascade extends SubsystemBase {
     // }else if (){
     //   m_cascadeMotors.set(0);
     // }
-    SmartDashboard.putNumber("Encoder 1 Count", m_encoder1.getPosition());
-    SmartDashboard.putNumber("Encoder 2 Count", m_encoder2.getPosition());
+    //System.out.println("test motors");
+    //m_cascadeMotors.set(-0.1);
+    m_cascadeMotors.set(-joystick.getRawAxis(1));
+    //m_pidController1.setReference(-0.1, CANSparkMax.ControlType.kSmartMotion);
+    //m_pidController2.setReference(-0.1, CANSparkMax.ControlType.kSmartMotion);
+    // SmartDashboard.putNumber("Encoder 1 Ticks", m_encoder1.getPosition()*m_encoder1.getCountsPerRevolution());
+    // SmartDashboard.putNumber("Encoder 2 Ticks", m_encoder2.getPosition()*m_encoder1.getCountsPerRevolution());
   }
   
-  public void testTeleMotors(){
+  public void stopCascadeMotors(){
+    m_cascadeMotors.set(0);
+  }
 
-  
+  public void testTeleMotors(){
     
 
-    // m_pidController1.setReference(joystick.getRawAxis(1), CANSparkMax.ControlType.kSmartMotion);
-    // m_pidController2.setReference(joystick.getRawAxis(1), CANSparkMax.ControlType.kSmartMotion);
+  }
+
+    public void autoCascadeDrive(double setpoint) {
+    // m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
+    // m_pidController2.setReference(setpoint, CANSparkMax.ControlType.kPosition);
+    m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
+    m_pidController2.setReference(setpoint, CANSparkMax.ControlType.kPosition);
+    atStage = true;
+    // m_pidController1.getSmartMotionAccelStrategy(0);
+  }
+
+  public void joyCascade(){
+    m_cascadeMotors.set(-joystick.getRawAxis(1));
+  }
+
+  public void cascadeLevels(){
+
+    if (joystick.getRawButton(2)){
+
+      m_goal = new TrapezoidProfile.State(CascadeConstants.kstage1, 0);
+
+    } else if (joystick.getRawButtonPressed(3)) {
+
+      m_goal = new TrapezoidProfile.State(0, 0);
+
+    }
+
+
+
+    // Create a motion profile with the given maximum velocity and maximum
+
+    // acceleration constraints for the next setpoint, the desired goal, and the
+
+    // current setpoint.
+
+    var profile = new TrapezoidProfile(m_constraints, m_goal, m_setpoint);
+
+
+
+    // Retrieve the profiled setpoint for the next timestep. This setpoint moves
+
+    // toward the goal while obeying the constraints.
+
+    m_setpoint = profile.calculate(kDt);
+
+
+
+    // Send setpoint to offboard controller PID
+
+    m_pidController1.setReference(0.2, CANSparkMax.ControlType.kPosition, 0, m_feedforward.calculate(m_setpoint.velocity) / 12.0);
+
+
 
   }
 
