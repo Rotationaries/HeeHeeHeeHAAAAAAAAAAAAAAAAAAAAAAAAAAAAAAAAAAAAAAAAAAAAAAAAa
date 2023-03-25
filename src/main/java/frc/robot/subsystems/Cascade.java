@@ -36,7 +36,6 @@ public class Cascade extends SubsystemBase {
   
   public boolean atStage;
 
-<<<<<<< HEAD
   private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1.5);
 
   private final TrapezoidProfile.Constraints m_constraints =
@@ -44,14 +43,6 @@ public class Cascade extends SubsystemBase {
 
   private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
-=======
-  private final SimpleMotorFeedforward m_feedForward = new SimpleMotorFeedforward(1, 1.5);
-
-  private final TrapezoidProfile.Constraints m_constraints = new TrapezoidProfile.Constraints(1, 0.5);
-  private final TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-  private final TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
-
->>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
 
   private final Joystick joystick = new Joystick (1);
   private static double kDt = 0.02;
@@ -235,18 +226,7 @@ public class Cascade extends SubsystemBase {
     
   }
 
-<<<<<<< HEAD
 
-=======
-  public void autoCascadeDrive(double setpoint) {
-    // m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
-    // m_pidController2.setReference(setpoint, CANSparkMax.ControlType.kPosition);
-    m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
-    m_pidController2.setReference(setpoint, CANSparkMax.ControlType.kPosition);
-    atStage = true;
-    // m_pidController1.getSmartMotionAccelStrategy(0);
-  }
->>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
 
   public boolean atBottom() {
     return m_encoder1.getPosition() == 0 && m_encoder2.getPosition() == 0;
@@ -293,10 +273,6 @@ public class Cascade extends SubsystemBase {
     return m_encoder2;
   }
 
-  public void joyCascade(){
-    m_cascadeMotors.set(-joystick.getRawAxis(1));
-  }
-
   public void testMotors(){
     // if(!atTop()){
     //   m_cascadeMotors.set(-0.1);
@@ -319,7 +295,6 @@ public class Cascade extends SubsystemBase {
   public void testTeleMotors(){
     
 
-<<<<<<< HEAD
   }
 
     public void autoCascadeDrive(double setpoint) {
@@ -373,8 +348,6 @@ public class Cascade extends SubsystemBase {
 
 
 
-=======
->>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
   }
 
 }

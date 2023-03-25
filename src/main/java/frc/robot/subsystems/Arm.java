@@ -19,11 +19,7 @@ public class Arm extends SubsystemBase {
 
   final int deviceID = 8; //need to set a deciveID
   SparkMaxPIDController m_pidController = motor1.getPIDController();
-<<<<<<< HEAD
-  public static CANSparkMax motor1 = new CANSparkMax(8, MotorType.kBrushless);
-=======
   public static CANSparkMax motor1 = new CANSparkMax(10, MotorType.kBrushless);
->>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
   RelativeEncoder m_encoder = motor1.getEncoder();
   double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr, setPoint;
 
@@ -141,7 +137,6 @@ public class Arm extends SubsystemBase {
     if((minV != minVel)) { m_pidController.setSmartMotionMinOutputVelocity(minV,0); minVel = minV; }
     if((maxA != maxAcc)) { m_pidController.setSmartMotionMaxAccel(maxA,0); maxAcc = maxA; }
     if((allE != allowedErr)) { m_pidController.setSmartMotionAllowedClosedLoopError(allE,0); allowedErr = allE; }
-<<<<<<< HEAD
   }
 
   public void armPID(double setpoint) {
@@ -149,12 +144,6 @@ public class Arm extends SubsystemBase {
     double processVariable;
     boolean mode = SmartDashboard.getBoolean("Mode", false);
     //setPoint = SmartDashboard.getNumber("Set Position", 0);
-=======
-
-    double setPoint, processVariable;
-    boolean mode = SmartDashboard.getBoolean("Mode", false);
-    setPoint = SmartDashboard.getNumber("Set Position", 0);
->>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
       /**
        * As with other PID modes, Smart Motion is set by calling the
        * setReference method on an existing pid object and setting
@@ -171,7 +160,6 @@ public class Arm extends SubsystemBase {
   public void armDrive(){
 
     if(joystick.getRawAxis(1) == 1){
-<<<<<<< HEAD
       motor1.set(0.5);
     } else if(joystick.getRawAxis(1) == -1){
       motor1.set(-0.5);
@@ -179,15 +167,6 @@ public class Arm extends SubsystemBase {
       motor1.set(0);
     }
 
-=======
-      motor1.set(0.75);
-    }
-
-    if(joystick.getRawAxis(1) == -1){
-      motor1.set(-0.75);
-    }
-
->>>>>>> e09c157c6086d8086ffa9eee641b183b28807a3e
     
   }
 
