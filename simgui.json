@@ -52,6 +52,7 @@
       "/LiveWindow/Ungrouped/MotorControllerGroup[3]": "Motor Controller",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[1]": "Gyro",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d"
     },
     "windows": {

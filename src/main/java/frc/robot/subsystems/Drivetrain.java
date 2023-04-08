@@ -82,6 +82,8 @@ public class Drivetrain extends SubsystemBase {
   public double m_currentForwardVelocity = 0;
   public double m_currentTurningVelocity = 0;
 
+  private final Vision m_camera = new Vision();
+
   /** Creates a new ExampleSubsystem. */
 
   public Drivetrain() {
@@ -199,7 +201,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     // resetEncoders();
-    m_drivetrainSimulator.setPose(pose);
+    //m_drivetrainSimulator.setPose(pose);
     m_odometry.resetPosition(Rotation2d.fromDegrees(getHeading()), m_leftEncoder1.getPosition(), m_rightEncoder1.getPosition(), pose);
   }
 
@@ -308,6 +310,8 @@ public class Drivetrain extends SubsystemBase {
   public Command getBalance(){
     return Commands.sequence(new Balance());
   }
+
+  
 
   public void controllerMovement(XboxController controller){
 

@@ -10,7 +10,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -19,7 +18,7 @@ public class Arm extends SubsystemBase {
 
   final int deviceID = 8; //need to set a deciveID
   SparkMaxPIDController m_pidController = motor1.getPIDController();
-  public static CANSparkMax motor1 = new CANSparkMax(10, MotorType.kBrushless);
+  public static CANSparkMax motor1 = new CANSparkMax(8, MotorType.kBrushless);
   RelativeEncoder m_encoder = motor1.getEncoder();
   double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr, setPoint;
 

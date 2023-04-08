@@ -1,14 +1,10 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
+  
 package frc.robot;
 
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 //import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -22,13 +18,11 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.CascadeConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Cascade;
 //import frc.robot.subsystems.Cascade;
 import frc.robot.subsystems.Drivetrain;
-// import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake;
 
 /**
@@ -91,10 +85,13 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     CommandScheduler.getInstance().cancelAll();
     m_robotContainer.zeroAllOutputs();
+    // m_robotContainer.configureAuto();
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.configureAuto();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -186,6 +183,16 @@ public class Robot extends TimedRobot {
     REVPhysicsSim.getInstance().addSparkMax(Drivetrain.leftMotor2, DCMotor.getNEO(1));
     REVPhysicsSim.getInstance().addSparkMax(Drivetrain.rightMotor1, DCMotor.getNEO(1));
     REVPhysicsSim.getInstance().addSparkMax(Drivetrain.rightMotor2, DCMotor.getNEO(1));
+
+     
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+    // // // // schedule the autonomous command (example)
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
+
+    
   }
 
   /** This function is called periodically whilst in simulation. */

@@ -3,23 +3,27 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.commands.Vision.CenterLimelight;
 
 public class Intake extends SubsystemBase {
+  private final Drivetrain m_drive = new Drivetrain();
+  private final Vision m_camera = new Vision();
 
-  private CANSparkMax intakeMotor = new CANSparkMax(10, MotorType.kBrushless);
+  private CANSparkMax intakeMotor;
   private boolean isIntakeUp;
   public Joystick joystick = new Joystick(1);
   /** Creates a new Intake. */
   public Intake()  {   
     System.out.println("Intake Started");
-
+    intakeMotor = new CANSparkMax(11, MotorType.kBrushless);
     
   }
 
@@ -57,6 +61,9 @@ public class Intake extends SubsystemBase {
   public void eject() {
     intakeMotor.set(IntakeConstants.INTAKE_SPEED);
   }
+
+  
+
 }
   
 

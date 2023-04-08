@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 //import frc.robot.Constants;
 //import frc.robot.Constants.CascadeConstants;
 import frc.robot.subsystems.Cascade;
-import frc.robot.subsystems.Drivetrain;
 
 public class CascadeLevels extends CommandBase {
   /** Creates a new CascadeLevels. */
@@ -29,21 +28,6 @@ public class CascadeLevels extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // switch(level){
-    //   case 3:
-
-
-    //   if(m_cascade.getEncoder1Count() == CascadeConstants.pos1);{
-    //     m_cascade.stopCascadeMotors();
-    //   }
-    //   break;
-    //   case 2:
-    //   if(m_cascade.getEncoder1Count() == CascadeConstants.pos2){
-    //     m_cascade.stopCascadeMotors();
-    //   }
-    //   case 1:
-    //   m_cascade.autoCascadeDrive(Constants.CascadeConstants.pos1);
-
     
 
     }

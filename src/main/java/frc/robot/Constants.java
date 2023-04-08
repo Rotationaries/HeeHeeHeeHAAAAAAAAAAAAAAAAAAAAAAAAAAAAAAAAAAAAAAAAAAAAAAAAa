@@ -96,8 +96,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = .9;
-    public static final double kMaxAccelerationMetersPerSecondSquared = .6;
+    public static final double kMaxSpeedMetersPerSecond = .1;
+    public static final double kMaxAccelerationMetersPerSecondSquared = .1;
     public static final double kMaxVoltageConstraint = 12;
     public static final PIDController leftPID = new PIDController(DriveConstants.kP, 0, 0);
     public static final PIDController rightPID = new PIDController(DriveConstants.kP, 0, 0);
