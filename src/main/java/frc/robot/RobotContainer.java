@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autonomous.DriveExampleAgain;
 import frc.robot.commands.Drive.Drive;
 import frc.robot.commands.Drive.DriveDistance;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,8 +22,7 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain m_robotDrive = new Drivetrain();
-
-  private final DriveExampleAgain m_driveExample = new DriveExampleAgain();
+  private final Vision vision = new Vision();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -69,6 +68,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return m_driveExample.driveForward();
+    return null;
   }
 }

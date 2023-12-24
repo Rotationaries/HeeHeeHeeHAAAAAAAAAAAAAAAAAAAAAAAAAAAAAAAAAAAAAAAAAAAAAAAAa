@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Cascade;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -34,7 +33,6 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private Drivetrain m_drive = new Drivetrain();
-  private Cascade m_cascade = new Cascade();
 
   private XboxController controller = new XboxController(0);
 
@@ -64,7 +62,7 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    //CommandScheduler.getInstance().run();
+    CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -117,8 +115,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // m_drive.arcadeDrive(0.5, 0.5);
-    m_drive.arcadeDrive(-controller.getLeftY(), 0.9*-controller.getRightX());
-    m_cascade.cascadeDrive();
+    m_drive.arcadeDrive(controller.getLeftY(), 0.9*controller.getRightX());
 
   }
 

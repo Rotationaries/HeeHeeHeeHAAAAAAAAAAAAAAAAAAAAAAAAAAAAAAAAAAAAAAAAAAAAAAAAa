@@ -4,16 +4,23 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
 
 public class Vision extends SubsystemBase {
   /** Creates a new Vision. */
+  private edu.wpi.first.cscore.UsbCamera webcam1;
+  private edu.wpi.first.cscore.UsbCamera webcam2;
+  private edu.wpi.first.cscore.UsbCamera webcam3;
+  private edu.wpi.first.cscore.UsbCamera webcam4;
 
   private final NetworkTable m_limelightTable;
   private final double m_isTargetValid;
@@ -35,7 +42,25 @@ public class Vision extends SubsystemBase {
     m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
     m_isTargetValid = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
     
-    
+    webcam1 = CameraServer.startAutomaticCapture();
+    webcam2 = CameraServer.startAutomaticCapture();
+    webcam3 = CameraServer.startAutomaticCapture();
+    webcam4 = CameraServer.startAutomaticCapture();
+
+    CameraServer.addCamera(webcam1);
+    CameraServer.addCamera(webcam2);
+    CameraServer.addCamera(webcam3);
+    CameraServer.addCamera(webcam4);
+    Shuffleboard.getTab("Camera").add(webcam1);
+    Shuffleboard.getTab("Camera").add(webcam2);
+    Shuffleboard.getTab("Camera").add(webcam3);
+    Shuffleboard.getTab("Camera").add(webcam4);
+
+    Thread visionThread = new Thread(() -> {
+      while(!Thread.interrupted()){
+        
+      }
+    });
   }
 
   public boolean getValidTarget(){

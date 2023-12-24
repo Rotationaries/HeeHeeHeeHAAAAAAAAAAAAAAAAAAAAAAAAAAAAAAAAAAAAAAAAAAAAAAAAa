@@ -21,10 +21,10 @@ import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
  */
 public final class Constants {
   public static final class DriveConstants {
-    public static final int kLeftMotor1Port = 3;
-    public static final int kLeftMotor2Port = 4;
-    public static final int kRightMotor1Port = 5;
-    public static final int kRightMotor2Port = 2;
+    public static final int kLeftMotor1Port = 10;
+    public static final int kLeftMotor2Port = 11;
+    public static final int kRightMotor1Port = 20;
+    public static final int kRightMotor2Port = 21;
 
     // public static final int[] kLeftEncoderPorts = new int[] {6, 7};
     // public static final int[] kRightEncoderPorts = new int[] {8, 9};
@@ -135,8 +135,8 @@ public final class Constants {
   }
 
   public static final class CascadeConstants {
-    public static final int kCascadeMotor1Port = 6;
-    public static final int kCascadeMotor2Port = 7;
+    //public static final int kCascadeMotor1Port = 6;
+    //public static final int kCascadeMotor2Port = 7;
     // public static final int[] kCascadeEncoder1Ports = new int[] {10,11};
     // public static final boolean kCascadeEncoder1Reversed = false;
     // public static final int[] kCascadeEncoder2Ports = new int[] {12,13};

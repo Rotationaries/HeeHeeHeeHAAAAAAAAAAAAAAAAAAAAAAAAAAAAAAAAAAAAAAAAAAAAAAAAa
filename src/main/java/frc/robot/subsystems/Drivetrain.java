@@ -33,12 +33,9 @@ import frc.robot.Constants.DriveConstants;
 public class Drivetrain extends SubsystemBase {
 
   public static CANSparkMax leftMotor1 = new CANSparkMax(DriveConstants.kLeftMotor1Port, MotorType.kBrushless);
-  public static CANSparkMax leftMotor2 = new CANSparkMax(DriveConstants.kLeftMotor2Port, MotorType.kBrushless);
-
-
+  public static CANSparkMax leftMotor2 = new CANSparkMax(DriveConstants.kLeftMotor2Port, MotorType.kBrushless);  
 
   MotorControllerGroup m_leftMotors = new MotorControllerGroup(leftMotor1, leftMotor2);
-
 
   // The motors on the right side of the drive.
   public static CANSparkMax rightMotor1 = new CANSparkMax(DriveConstants.kRightMotor1Port, MotorType.kBrushless);
